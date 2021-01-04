@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Fractal.Api.Logic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
@@ -16,10 +17,14 @@ namespace Fractal.Api.Controllers
   public class FractalController : ControllerBase
   {
     private readonly ILogger<FractalController> _logger;
+    private readonly IFractalCalculator fractal;
+    private readonly IColorGradient colorGradient;
 
-    public FractalController(ILogger<FractalController> logger)
+    public FractalController(ILogger<FractalController> logger, IFractalCalculator fractal, IColorGradient colorGradient)
     {
       _logger = logger;
+      this.fractal = fractal;
+      this.colorGradient = colorGradient;
     }
 
     [HttpGet]
@@ -42,19 +47,16 @@ namespace Fractal.Api.Controllers
       var image = new Image<Rgba32>(VIEWMAXX, VIEWMAXY);
       response.RegisterForDispose(image);
 
-
-      Fractal fractal = new Fractal(x, y, precision, VIEWMAXX, VIEWMAXY);
-
       return await Task.Run(() =>
       {
-
+        fractal.Init(x, y, precision, VIEWMAXX, VIEWMAXY);
         // todo: parallelize it
         for (int x = 0; x < image.Width; x++)
         {
           for (int y = 0; y < image.Height; y++)
           {
             // image[x, y] = x == y ? Color.Black : Color.CadetBlue;
-            image[x, y] = fractal.Rainbow(fractal.GetIterationStepNumber(x, y));
+            image[x, y] = colorGradient.Rainbow(fractal.GetIterationStepNumber(x, y));
           }
         }
 
