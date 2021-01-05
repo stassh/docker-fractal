@@ -4,6 +4,8 @@ Project based on dotnet Web API.
 
 ## Workflow
 
+<div hidden>
+```
 @startuml Fractal
 
 autonumber "<b>[0]"
@@ -52,3 +54,7 @@ WebApi -> TaskSheduler : SheduleTask
 return taskId
 
 @enduml
+```
+</div>
+
+![](Fractal.svg)
