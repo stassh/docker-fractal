@@ -1,4 +1,6 @@
 ﻿using Fractal.Api.Logic;
+using Fractal.Api.Model;
+using Fractal.Api.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,14 +19,16 @@ namespace Fractal.Api.Controllers
   public class FractalController : ControllerBase
   {
     private readonly ILogger<FractalController> _logger;
-    private readonly IFractalCalculator fractal;
+    private readonly IFractalComputator fractal;
     private readonly IColorGradient colorGradient;
+    private readonly IJobSchedulerService jobSchedulerService;
 
-    public FractalController(ILogger<FractalController> logger, IFractalCalculator fractal, IColorGradient colorGradient)
+    public FractalController(ILogger<FractalController> logger, IJobSchedulerService jobSchedulerService, IFractalComputator fractal, IColorGradient colorGradient)
     {
       _logger = logger;
       this.fractal = fractal;
       this.colorGradient = colorGradient;
+      this.jobSchedulerService = jobSchedulerService;
     }
 
     [HttpGet]
@@ -38,6 +42,22 @@ namespace Fractal.Api.Controllers
       var imageBytes = await this.GetImageArray(HttpContext.Response);
 
       await response.Body.WriteAsync(imageBytes, 0, imageBytes.Length);
+    }
+
+    [HttpGet]
+    [Route("schedule")]
+    public async Task<FractalComputationMessage> ScheduleFractalComputationTask()
+    {
+      var response = HttpContext.Response;
+      response.ContentType = "application/json";
+
+      var jobList = new List<FractalComputationJob>() { new FractalComputationJob() { JobId = "100", Link = "link://200" }, new FractalComputationJob() { JobId = "200", Link = "link://400" } };
+      var rows = new List<FractalComputationJobList>() { new FractalComputationJobList() { Jobs = jobList } };
+      var result = new FractalComputationMessage() { Rows = rows };
+
+      await jobSchedulerService.PushMessageAsync(result);
+
+      return result;
     }
 
     private async Task<byte[]> GetImageArray(HttpResponse response, double x = 0, double y = 0, double precision = 2.5, int VIEWMAXX = 800, int VIEWMAXY = 800)

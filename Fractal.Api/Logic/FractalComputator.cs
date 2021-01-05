@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Fractal.Api.Logic
 {
-  public class FractalCalculator : IFractalCalculator
+  public class FractalComputator : IFractalComputator
   {
     public static int ITERATION_LIMIT = 255;
     private double x1;
@@ -32,7 +32,7 @@ namespace Fractal.Api.Logic
       double x = x1 + deltaX * pointX;
       double y = y1 + deltaY * pointY;
 
-      return GetIterationStepNumber(x, y, FractalCalculator.ITERATION_LIMIT);
+      return GetIterationStepNumber(x, y, FractalComputator.ITERATION_LIMIT);
     }
 
     public int GetIterationStepNumber(double pointX, double pointY, int limit)

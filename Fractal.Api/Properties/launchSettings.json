@@ -29,7 +29,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/fractal/full",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/fractal/schedule",
       "publishAllPorts": true,
       "useSSL": true
     }

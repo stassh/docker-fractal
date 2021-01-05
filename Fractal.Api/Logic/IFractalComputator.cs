@@ -2,7 +2,7 @@
 
 namespace Fractal.Api.Logic
 {
-  public interface IFractalCalculator
+  public interface IFractalComputator
   {
     void Init(double x, double y, double precision, int viewMaxX, int viewMaxY);
     int GetIterationStepNumber(int pointX, int pointY);
